@@ -9,14 +9,44 @@ interface Todo {
 class TodoApp {
   todoList: Todo[];
 
-  constructor() {}
+  constructor() {
+    this.todoList = [];
+
+    this.initEvent();
+  }
+
+  initEvent() {
+    const inputEl = document.querySelector('#todo-input');
+
+    inputEl.addEventListener('keydown', this.addTodo.bind(this));
+  }
 
   /**
    * 할 일을 추가할 수 있다.
    *
-   * @param {string} text
+   * @param {event} event
    */
-  addTodo(text) {}
+  addTodo(event) {
+    if (event.key !== 'Enter') {
+      return;
+    }
+
+    const target = event.target;
+
+    if (!target.value) {
+      return;
+    }
+
+    this.todoList.push({
+      id: this.todoList.length + 1,
+      isDone: false,
+      content: target.value,
+    });
+
+    target.value = '';
+
+    this.render(this.todoList);
+  }
 
   /**
    * 모든 할 일을 조회할 수 있다.
@@ -24,14 +54,7 @@ class TodoApp {
    * @returns {Todo[]} 전체 할일
    */
   getTodoList() {
-    // return this.todoList;
-    return [
-      {
-        id: 0,
-        content: 'test',
-        isDone: false,
-      },
-    ];
+    return this.todoList;
   }
 
   /**
@@ -74,11 +97,11 @@ class TodoApp {
     return containerEl;
   }
 
-  render() {
+  render(todoList = []) {
     const todoListEl = document.querySelector('.todo-items');
 
     const fragment = document.createDocumentFragment();
-    const todoListComponent = this.getTodoList().map((todo) => this.generateTodoList(todo));
+    const todoListComponent = todoList.map((todo) => this.generateTodoList(todo));
 
     fragment.append(...todoListComponent);
     todoListEl.appendChild(fragment);
