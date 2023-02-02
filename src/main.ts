@@ -107,6 +107,9 @@ class TodoApp {
   render(todoList: Todo[] = []) {
     const todoListEl = document.querySelector('.todo-items');
 
+    // 리스트 비우기
+    todoListEl?.replaceChildren();
+
     const fragment = document.createDocumentFragment();
     const todoListComponent = todoList.map((todo) => this.generateTodoList(todo));
 
