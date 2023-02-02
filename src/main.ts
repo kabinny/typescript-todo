@@ -72,7 +72,23 @@ class TodoApp {
    * @param {string} [todo.text] 수정될 내용
    * @param {string} [todo.status] 수정될 상태
    */
-  // updateTodo({ id, text, status }) {}
+  updateTodo({ target }: MouseEvent, selectedId: Todo['id']) {
+    const inputText = target && (target as HTMLDivElement).innerText;
+
+    if (!inputText) {
+      return;
+    }
+
+    const selectedIndex = this.todoList.findIndex((todo) => todo.id === selectedId);
+    const selectedTodo = this.todoList[selectedIndex];
+    const newTodo = {
+      ...selectedTodo,
+      content: inputText,
+    };
+
+    this.todoList.splice(selectedIndex, 1, newTodo);
+    this.render(this.todoList);
+  }
 
   /**
    * 특정 할 일을 제거할 수 있다.
@@ -98,7 +114,10 @@ class TodoApp {
     containerEl.classList.add('item');
     containerEl.innerHTML = todoTemplate;
 
+    const contentEl = containerEl.querySelector('.content');
     const deleteButtonEl = containerEl.querySelector('button');
+
+    contentEl?.addEventListener('blur', (event) => this.updateTodo(event, todo.id));
     deleteButtonEl?.addEventListener('click', () => this.removeTodo(todo.id));
 
     return containerEl;
