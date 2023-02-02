@@ -18,7 +18,7 @@ class TodoApp {
   initEvent() {
     const inputEl = document.querySelector('#todo-input');
 
-    inputEl.addEventListener('keydown', this.addTodo.bind(this));
+    inputEl?.addEventListener('keydown', this.addTodo.bind(this));
   }
 
   /**
@@ -26,12 +26,12 @@ class TodoApp {
    *
    * @param {event} event
    */
-  addTodo(event) {
+  addTodo(event: KeyboardEventInit) {
     if (event.key !== 'Enter') {
       return;
     }
 
-    const target = event.target;
+    const target = <HTMLInputElement>(event as KeyboardEvent).target;
 
     if (!target.value) {
       return;
@@ -63,7 +63,7 @@ class TodoApp {
    * @param {string} filterType
    * @returns {Todo[]} 필터링된 할일
    */
-  getTodoListByFilter(filterType) {}
+  // getTodoListByFilter(filterType) {}
 
   /**
    * 할 일의 내용과 상태를 수정할 수 있다.
@@ -72,21 +72,21 @@ class TodoApp {
    * @param {string} [todo.text] 수정될 내용
    * @param {string} [todo.status] 수정될 상태
    */
-  updateTodo({ id, text, status }) {}
+  // updateTodo({ id, text, status }) {}
 
   /**
    * 특정 할 일을 제거할 수 있다.
    *
    * @param {number} id
    */
-  removeTodo(id) {}
+  // removeTodo(id) {}
 
-  generateTodoList(todoList) {
+  generateTodoList(todo: Todo) {
     const containerEl = document.createElement('div');
     const todoTemplate = `
       <div class="item__div">
-        <input type="checkbox" ${todoList.isDone && 'checked'} />
-        <div class="content ${todoList.isDone && 'checked'}" contentEditable>${todoList.content}</div>
+        <input type="checkbox" ${todo.isDone && 'checked'} />
+        <div class="content ${todo.isDone && 'checked'}" contentEditable>${todo.content}</div>
         <button>X</button>
       </div>
     `;
@@ -97,14 +97,14 @@ class TodoApp {
     return containerEl;
   }
 
-  render(todoList = []) {
+  render(todoList: Todo[] = []) {
     const todoListEl = document.querySelector('.todo-items');
 
     const fragment = document.createDocumentFragment();
     const todoListComponent = todoList.map((todo) => this.generateTodoList(todo));
 
     fragment.append(...todoListComponent);
-    todoListEl.appendChild(fragment);
+    todoListEl?.appendChild(fragment);
   }
 }
 
