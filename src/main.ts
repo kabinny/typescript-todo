@@ -79,7 +79,11 @@ class TodoApp {
    *
    * @param {number} id
    */
-  // removeTodo(id) {}
+  removeTodo(selectedId: Todo['id']) {
+    this.todoList = this.todoList.filter((todo) => todo.id !== selectedId);
+
+    this.render(this.todoList);
+  }
 
   generateTodoList(todo: Todo) {
     const containerEl = document.createElement('div');
@@ -93,6 +97,9 @@ class TodoApp {
 
     containerEl.classList.add('item');
     containerEl.innerHTML = todoTemplate;
+
+    const deleteButtonEl = containerEl.querySelector('button');
+    deleteButtonEl?.addEventListener('click', () => this.removeTodo(todo.id));
 
     return containerEl;
   }
