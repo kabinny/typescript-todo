@@ -7,39 +7,42 @@ interface Todo {
 }
 
 class TodoApp {
+  filterStatus: string;
   todoList: Todo[];
 
   constructor() {
     this.todoList = [];
+    this.filterStatus = 'all';
 
     this.initEvent();
   }
 
   initEvent() {
     const inputEl = document.querySelector('#todo-input');
-    const controlButtonElements = document.querySelectorAll('.control > .btn')
+    const controlButtonElements = document.querySelectorAll('.control > .btn');
 
     controlButtonElements.forEach((button) => {
-      const [,buttonClass] = button.classList.value.split(' ')
+      const [, buttonClass] = button.classList.value.split(' ');
 
-      button.addEventListener('click', (event:MouseEventInit) => {
-        const currentTodoList = this.getTodoListByFilter(buttonClass)
-        this.toggleFilterStatus(event)
-        this.render(currentTodoList)
-      })
-    })
+      button.addEventListener('click', (event: MouseEventInit) => {
+        this.filterStatus = buttonClass;
+
+        this.toggleFilterStatus(event);
+        this.render();
+      });
+    });
 
     inputEl?.addEventListener('keydown', this.addTodo.bind(this));
   }
 
-  toggleFilterStatus(event:MouseEventInit) {
-    const controlButtonElements = document.querySelectorAll('.control > .btn')
+  toggleFilterStatus(event: MouseEventInit) {
+    const controlButtonElements = document.querySelectorAll('.control > .btn');
 
-    controlButtonElements.forEach(button=> button.classList.remove('active'))
+    controlButtonElements.forEach((button) => button.classList.remove('active'));
 
-    const targetElement = ((event as MouseEvent).target) as HTMLButtonElement
+    const targetElement = (event as MouseEvent).target as HTMLButtonElement;
     if (targetElement) {
-      targetElement.classList.add('active')
+      targetElement.classList.add('active');
     }
   }
 
@@ -67,7 +70,7 @@ class TodoApp {
 
     target.value = '';
 
-    this.render(this.todoList);
+    this.render();
   }
 
   /**
@@ -119,7 +122,7 @@ class TodoApp {
     };
 
     this.todoList.splice(selectedIndex, 1, newTodo);
-    this.render(this.todoList);
+    this.render();
   }
 
   updateTodoStatus(selectedId: Todo['id']) {
@@ -131,7 +134,7 @@ class TodoApp {
     };
 
     this.todoList.splice(selectedIndex, 1, newTodo);
-    this.render(this.todoList);
+    this.render();
   }
 
   /**
@@ -142,7 +145,7 @@ class TodoApp {
   removeTodo(selectedId: Todo['id']) {
     this.todoList = this.todoList.filter((todo) => todo.id !== selectedId);
 
-    this.render(this.todoList);
+    this.render();
   }
 
   generateTodoList(todo: Todo) {
@@ -169,20 +172,25 @@ class TodoApp {
     return containerEl;
   }
 
-  render(todoList: Todo[] = []) {
+  render() {
     const todoListEl = document.querySelector('.todo-items');
     const todoCountEl = <HTMLSpanElement>document.querySelector('#todo-count');
 
     // 리스트 비우기
     todoListEl?.replaceChildren();
 
-    const fragment = document.createDocumentFragment();
-    const todoListComponent = todoList.map((todo) => this.generateTodoList(todo));
+    const currentTodoList = this.getTodoListByFilter(this.filterStatus);
 
-    fragment.append(...todoListComponent);
-    todoListEl?.appendChild(fragment);
-    if (todoCountEl) {
-      todoCountEl.innerText = String(todoList.length);
+    const fragment = document.createDocumentFragment();
+    const todoListComponent = currentTodoList?.map((todo) => this.generateTodoList(todo));
+
+    if (todoListComponent) {
+      fragment.append(...todoListComponent);
+      todoListEl?.appendChild(fragment);
+    }
+
+    if (todoCountEl && currentTodoList) {
+      todoCountEl.innerText = String(currentTodoList.length);
     }
   }
 }
