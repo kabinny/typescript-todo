@@ -24,11 +24,23 @@ class TodoApp {
 
       button.addEventListener('click', (event:MouseEventInit) => {
         const currentTodoList = this.getTodoListByFilter(buttonClass)
+        this.toggleFilterStatus(event)
         this.render(currentTodoList)
       })
     })
 
     inputEl?.addEventListener('keydown', this.addTodo.bind(this));
+  }
+
+  toggleFilterStatus(event:MouseEventInit) {
+    const controlButtonElements = document.querySelectorAll('.control > .btn')
+
+    controlButtonElements.forEach(button=> button.classList.remove('active'))
+
+    const targetElement = ((event as MouseEvent).target) as HTMLButtonElement
+    if (targetElement) {
+      targetElement.classList.add('active')
+    }
   }
 
   /**
