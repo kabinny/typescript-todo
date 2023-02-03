@@ -72,8 +72,8 @@ class TodoApp {
    * @param {string} [todo.text] 수정될 내용
    * @param {string} [todo.status] 수정될 상태
    */
-  updateTodo({ target }: MouseEvent, selectedId: Todo['id']) {
-    const inputText = target && (target as HTMLDivElement).innerText;
+  updateTodoContent(event: MouseEventInit, selectedId: Todo['id']) {
+    const inputText = (event as MouseEvent).target && ((event as MouseEvent).target as HTMLInputElement).innerText;
 
     if (!inputText) {
       return;
@@ -84,6 +84,18 @@ class TodoApp {
     const newTodo = {
       ...selectedTodo,
       content: inputText,
+    };
+
+    this.todoList.splice(selectedIndex, 1, newTodo);
+    this.render(this.todoList);
+  }
+
+  updateTodoStatus(selectedId: Todo['id']) {
+    const selectedIndex = this.todoList.findIndex((todo) => todo.id === selectedId);
+    const selectedTodo = this.todoList[selectedIndex];
+    const newTodo = {
+      ...selectedTodo,
+      isDone: !selectedTodo.isDone,
     };
 
     this.todoList.splice(selectedIndex, 1, newTodo);
@@ -115,9 +127,11 @@ class TodoApp {
     containerEl.innerHTML = todoTemplate;
 
     const contentEl = containerEl.querySelector('.content');
+    const checkboxEl = containerEl.querySelector('input[type=checkbox]');
     const deleteButtonEl = containerEl.querySelector('button');
 
-    contentEl?.addEventListener('blur', (event) => this.updateTodo(event, todo.id));
+    contentEl?.addEventListener('blur', (event) => this.updateTodoContent(event, todo.id));
+    checkboxEl?.addEventListener('change', () => this.updateTodoStatus(todo.id));
     deleteButtonEl?.addEventListener('click', () => this.removeTodo(todo.id));
 
     return containerEl;
