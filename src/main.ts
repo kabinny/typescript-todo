@@ -171,6 +171,7 @@ class TodoApp {
 
   render(todoList: Todo[] = []) {
     const todoListEl = document.querySelector('.todo-items');
+    const todoCountEl = <HTMLSpanElement>document.querySelector('#todo-count');
 
     // 리스트 비우기
     todoListEl?.replaceChildren();
@@ -180,6 +181,9 @@ class TodoApp {
 
     fragment.append(...todoListComponent);
     todoListEl?.appendChild(fragment);
+    if (todoCountEl) {
+      todoCountEl.innerText = String(todoList.length);
+    }
   }
 }
 
