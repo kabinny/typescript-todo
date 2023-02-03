@@ -6,13 +6,21 @@ interface Todo {
   isDone: boolean;
 }
 
+enum FilterStatus {
+  All = 'all',
+  Completed = 'complete',
+  Active = 'not-complete',
+}
+
+type FilterType = `${FilterStatus}`;
+
 class TodoApp {
-  filterStatus: string;
+  filterStatus: FilterType;
   todoList: Todo[];
 
   constructor() {
     this.todoList = [];
-    this.filterStatus = 'all';
+    this.filterStatus = FilterStatus.All;
 
     this.initEvent();
   }
@@ -25,7 +33,7 @@ class TodoApp {
       const [, buttonClass] = button.classList.value.split(' ');
 
       button.addEventListener('click', (event: MouseEventInit) => {
-        this.filterStatus = buttonClass;
+        this.filterStatus = buttonClass as FilterType;
 
         this.toggleFilterStatus(event);
         this.render();
@@ -74,28 +82,19 @@ class TodoApp {
   }
 
   /**
-   * 모든 할 일을 조회할 수 있다.
-   *
-   * @returns {Todo[]} 전체 할일
-   */
-  getTodoList() {
-    return this.todoList;
-  }
-
-  /**
    * 모든 할 일을 필터링하여 조회할 수 있다.
    *
    * @param {string} filterType
    * @returns {Todo[]} 필터링된 할일
    */
-  getTodoListByFilter(filterType: string) {
-    if (filterType === 'all') {
+  getTodoListByFilter(filterType: FilterType) {
+    if (filterType === FilterStatus.All) {
       return this.todoList;
     }
-    if (filterType === 'complete') {
+    if (filterType === FilterStatus.Completed) {
       return this.todoList.filter((todo) => todo.isDone);
     }
-    if (filterType === 'not-complete') {
+    if (filterType === FilterStatus.Active) {
       return this.todoList.filter((todo) => !todo.isDone);
     }
   }
